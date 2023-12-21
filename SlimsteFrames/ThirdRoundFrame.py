@@ -39,7 +39,7 @@ class ThirdRoundFrame:
             label = tk.Label(
                 master=self.upper_frame,
                 text=hint.get_hint(),
-                font=("Arial", 16, "bold"),
+                font=("Arial", 40, "bold"),
                 fg=color,
                 bg="red",
                 padx=10,
@@ -57,7 +57,7 @@ class ThirdRoundFrame:
             label = tk.Label(
                 master=self.lower_frame,
                 text=answer.get_answer(),
-                font=("Arial", 16, "bold"),
+                font=("Arial", 40, "bold"),
                 fg=color,
                 bg="red",
                 padx=10,

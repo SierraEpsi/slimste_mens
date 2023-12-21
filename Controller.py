@@ -14,9 +14,10 @@ class Controller:
         self.question_nb = 0
         self.game_state = ""
         self.wrong_answers = 0
-        self.NB_ROUND_1 = 15
+        self.NB_ROUND_1 = 12
         self.current_question = None
         self.questions = Questions()
+        self.score_5 = 0
 
     def get_current_round(self):
         return self.round_nb
@@ -59,6 +60,23 @@ class Controller:
                 return i
         return -1
 
+    def get_final_players(self):
+        final_players = []
+        if self.players[0].get_score() > self.players[1].get_score():
+            final_players.append(self.players[0])
+            if self.players[1].get_score() > self.players[2].get_score():
+                final_players.append(self.players[1])
+            else:
+                final_players.append(self.players[2])
+        else:
+            final_players.append(self.players[1])
+            if self.players[0].get_score() > self.players[2].get_score():
+                final_players.append(self.players[0])
+            else:
+                final_players.append(self.players[2])
+        return final_players
+
+
     def have_all_players_played(self):
         for player in self.players:
             if not player.has_played():
@@ -70,6 +88,11 @@ class Controller:
             if not player.has_answered():
                 return False
         return True
+
+    def update_screen(self):
+        self.refresh()
+        if self.game_state == "PLAY":
+            self.content_window.get_window().after(1000, self.update_screen)
 
     def refresh(self):
         if self.round_nb == 1:
@@ -114,19 +137,36 @@ class Controller:
     def next_question_1(self):
         self.game_state = "PLAY"
         self.wrong_answers = 0
-        self.question_nb += 1
         if self.question_nb > self.NB_ROUND_1:
             print("VRAGEN ZIJN OP")
         else:
+            self.question_nb += 1
             print("VOLGENDE VRAAG")
         self.refresh()
+
+    def next_picture_4(self):
+        pass
 
     def reveal_answer(self, answer_nb):
         if not self.current_question.get_answer(answer_nb).is_revealed():
             self.current_question.get_answer(answer_nb).reveal()
             if self.game_state == "PLAY":
-                self.players[self.current_player].add_score(20)
+                if self.round_nb == 2:
+                    self.players[self.current_player].add_score(20)
+                elif self.round_nb == 3:
+                    self.players[self.current_player].add_score(30)
+                elif self.round_nb == 4:
+                    self.players[self.current_player].add_score(15)
+                elif self.round_nb == 5:
+                    self.players[self.current_player].add_score(self.score_5)
+                    self.score_5 += 10
+                elif self.round_nb == 6:
+                    if self.current_player == 0:
+                        self.players[1].add_score(-20)
+                    elif self.current_player == 1:
+                        self.players[0].add_score(-20)
             if self.current_question.is_answered():
+                self.players[self.current_player].pass_question()
                 self.game_state = "END"
             self.refresh()
 
@@ -134,13 +174,13 @@ class Controller:
         print("PLAYER START PLAYING")
         self.game_state = "PLAY"
         self.players[self.current_player].play()
-        self.control_window.refresh(self.game_state)
+        self.update_screen()
 
     def continue_question(self):
         print("PLAYER CONTINUE PLAYING")
         self.game_state = "PLAY"
         self.players[self.current_player].answer()
-        self.refresh()
+        self.update_screen()
 
     def pass_question(self):
         print("PLAYER PASSES")
@@ -154,7 +194,10 @@ class Controller:
         self.refresh()
 
     def next_question(self):
-        if self.question_nb < 3:
+        max_questions = 3
+        if self.round_nb == 6:
+            max_questions = 999
+        if self.question_nb < max_questions:
             self.question_nb += 1
             self.game_state = "START"
             self.current_question = self.questions.get_question(self.round_nb, self.question_nb)
@@ -162,6 +205,15 @@ class Controller:
                 self.content_window.create_round_2(self.current_question)
             elif self.round_nb == 3:
                 self.content_window.create_round_3(self.current_question)
+            elif self.round_nb == 4:
+                self.content_window.create_round_4()
+            elif self.round_nb == 5:
+                self.content_window.create_round_5(self.current_question)
+                self.score_5 = 10
+            elif self.round_nb == 6:
+                self.content_window.create_round_final(self.current_question)
+                for player in self.players:
+                    player.new_round()
             for player in self.players:
                 player.new_question()
             self.current_player = self.next_candidate_to_play()
@@ -186,3 +238,37 @@ class Controller:
         for player in self.players:
             player.new_round()
         self.current_player = self.next_candidate_to_play()
+
+    def start_round_4(self):
+        self.round_nb = 4
+        self.question_nb = 1
+        self.game_state = "START"
+        self.current_question = self.questions.get_question(self.round_nb, self.question_nb)
+        self.content_window.create_round_4()
+        for player in self.players:
+            player.new_round()
+        self.current_player = self.next_candidate_to_play()
+
+    def start_round_5(self):
+        self.round_nb = 5
+        self.question_nb = 1
+        self.game_state = "START"
+        self.current_question = self.questions.get_question(self.round_nb, self.question_nb)
+        self.content_window.create_round_5(self.current_question)
+        for player in self.players:
+            player.new_round()
+        self.current_player = self.next_candidate_to_play()
+        self.score_5 = 10
+
+    def start_round_final(self):
+        self.round_nb = 6
+        self.question_nb = 1
+        self.game_state = "START"
+        self.current_question = self.questions.get_question(self.round_nb, self.question_nb)
+        final_players = self.get_final_players()
+        self.players = final_players
+        self.content_window.create_round_final(self.current_question, self.players)
+        for player in self.players:
+            player.new_round()
+        self.current_player = self.next_candidate_to_play()
+        self.score_5 = 10

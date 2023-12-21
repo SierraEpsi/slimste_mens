@@ -1,7 +1,7 @@
 import tkinter as tk
 
 
-class SecondRoundFrame:
+class FifthRoundFrame:
     def __init__(self, frame, question):
         # Set up frame structure
         self.question = question
@@ -27,16 +27,3 @@ class SecondRoundFrame:
                 pady=5,
             )
             label.grid(row=i, column=0, padx=5, pady=5)
-
-if __name__ == "__main__":
-    window = tk.Tk()
-    content_frame = tk.Frame(window)
-    these_answers = [
-            {"answer": "test1", "given":False},
-            {"answer": "test2", "given":True},
-            {"answer": "test3", "given":False},
-            {"answer": "test4", "given":False},
-        ]
-    first_round_frame = SecondRoundFrame(content_frame, these_answers)
-    content_frame.pack()
-    window.mainloop()

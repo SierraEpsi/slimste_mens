@@ -1,5 +1,8 @@
 import tkinter as tk
 
+from SlimsteFrames.FifthRoundControlFrame import FifthRoundControlFrame
+from SlimsteFrames.FinalRoundControlFrame import FinalRoundControlFrame
+from SlimsteFrames.FourthRoundControlFrame import FourthRoundControlFrame
 from SlimsteFrames.SecondRoundControlFrame import SecondRoundControlFrame
 from SlimsteFrames.SetupFrame import SetupFrame
 from SlimsteFrames.FirstRoundControlFrame import FirstRoundControlFrame
@@ -25,14 +28,14 @@ class ControlWindow:
         self.right_frame.pack(side="right", fill="y")
 
         # add round buttons to side frame
-        rounds = ["Setup", "3-6-9", "Open deur", "Puzzel ronde", "Gallerij", "Collectief geheugen"]
+        rounds = ["Setup", "3-6-9", "Open deur", "Puzzel ronde", "Gallerij", "Collectief geheugen", "Finale"]
         self.round_buttons = [
             tk.Button(
                 self.left_frame,
                 text=round_name,
                 command=lambda r=round_name: self.switch_round(r),
                 bg="red",
-                fg="yellow",
+                fg="black",
                 font=("Helvetica", 12, "bold")
             ) for round_name in rounds
         ]
@@ -57,6 +60,12 @@ class ControlWindow:
             self.create_second_round()
         elif round_name == "Puzzel ronde":
             self.create_third_round()
+        elif round_name == "Gallerij":
+            self.create_fourth_round()
+        elif round_name == "Collectief geheugen":
+            self.create_fifth_round()
+        elif round_name == "Finale":
+            self.create_final_round()
 
     def refresh(self, game_state="START"):
         self.control_frame.refresh(game_state)
@@ -90,6 +99,38 @@ class ControlWindow:
         self.control_frame = ThirdRoundControlFrame(
             self.right_frame,
             self.controller
+        )
+        self.controller.refresh()
+
+    def create_fourth_round(self):
+        for widget in self.right_frame.winfo_children():
+            widget.destroy()
+        self.controller.start_round_4()
+        self.control_frame = FourthRoundControlFrame(
+            self.right_frame,
+            self.controller
+        )
+        self.controller.refresh()
+
+    def create_fifth_round(self):
+        for widget in self.right_frame.winfo_children():
+            widget.destroy()
+        self.controller.start_round_5()
+        self.control_frame = FifthRoundControlFrame(
+            self.right_frame,
+            self.controller,
+            self.controller.get_current_question()
+        )
+        self.controller.refresh()
+
+    def create_final_round(self):
+        for widget in self.right_frame.winfo_children():
+            widget.destroy()
+        self.controller.start_round_final()
+        self.control_frame = FinalRoundControlFrame(
+            self.right_frame,
+            self.controller,
+            self.controller.get_current_question()
         )
         self.controller.refresh()
 

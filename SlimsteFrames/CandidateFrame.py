@@ -18,8 +18,8 @@ class CandidateFrame:
 
         tk.Label(
             self.candidate_frame_current,
-            text=f"Current: {players[current_player].get_name()}" if current_player != -1 else "Current:",
-            font=("Arial", 16, "bold"),
+            text=f"Current: {players[current_player].get_name()}\n{players[current_player].get_score()}" if current_player != -1 else "Current:",
+            font=("Arial", 40, "bold"),
             fg="orange",
             bg="red",
             padx=10,
@@ -33,7 +33,7 @@ class CandidateFrame:
             tk.Label(
                 self.candidate_frame_info,
                 text=f"{player.get_name()}\n{player.get_score()} seconds",
-                font=("Arial", 12, "bold"),
+                font=("Arial", 30, "bold"),
                 fg="white",
                 bg="red",
                 padx=10,

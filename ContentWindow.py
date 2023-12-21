@@ -1,6 +1,10 @@
 import tkinter as tk
 
 from SlimsteFrames.DefaultFrame import DefaultFrame
+from SlimsteFrames.FifthRoundFrame import FifthRoundFrame
+from SlimsteFrames.FinalCandidateFrame import FinalCandidateFrame
+from SlimsteFrames.FinalRoundFrame import FinalRoundFrame
+from SlimsteFrames.FourthRoundFrame import FourthRoundFrame
 from SlimsteUtils.Player import Player
 
 from SlimsteFrames.CandidateFrame import CandidateFrame
@@ -42,10 +46,18 @@ class ContentWindow:
     def get_content_frame(self):
         return self.content_frame
 
+    def get_window(self):
+        return self.window
+
     def init_candidates(self, players):
         for widget in self.lower_frame.winfo_children():
             widget.destroy()
         self.candidate_frame = CandidateFrame(self.lower_frame, players)
+
+    def init_candidates_final(self, players):
+        for widget in self.lower_frame.winfo_children():
+            widget.destroy()
+        self.candidate_frame = FinalCandidateFrame(self.lower_frame, players)
 
     def refresh(self, players, current_player=-1, question_nb=-1):
         if self.round == 1:
@@ -67,9 +79,30 @@ class ContentWindow:
         self.content_frame = SecondRoundFrame(self.upper_frame, question)
 
     def create_round_3(self, question):
+        self.round = 3
         for widget in self.upper_frame.winfo_children():
             widget.destroy()
         self.content_frame = ThirdRoundFrame(self.upper_frame, question)
+
+    def create_round_4(self):
+        self.round = 4
+        for widget in self.upper_frame.winfo_children():
+            widget.destroy()
+        self.content_frame = FourthRoundFrame(self.upper_frame)
+
+    def create_round_5(self, question):
+        self.round = 5
+        for widget in self.upper_frame.winfo_children():
+            widget.destroy()
+        self.content_frame = FifthRoundFrame(self.upper_frame, question)
+
+    def create_round_final(self, question, players=-1):
+        self.round = 6
+        if players != -1:
+            self.init_candidates_final(players)
+        for widget in self.upper_frame.winfo_children():
+            widget.destroy()
+        self.content_frame = FinalRoundFrame(self.upper_frame, question)
 
 
 if __name__ == "__main__":
