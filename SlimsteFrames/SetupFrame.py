@@ -27,6 +27,9 @@ class SetupFrame:
         submit_button = tk.Button(submit_frame, text="Submit", command=self.submit_names)
         submit_button.pack()
 
+    def refresh(self):
+        pass
+
     def submit_names(self):
         player_names = [name.get() for name in self.candidate_entries]
         print("ADDING PLAYERS:", player_names)

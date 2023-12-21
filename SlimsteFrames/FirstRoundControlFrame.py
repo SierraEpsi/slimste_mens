@@ -29,13 +29,14 @@ class FirstRoundControlFrame:
         self.current_label.pack(side="left")
         self.create_playing_control()
 
-    def update_round(self):
+    def refresh(self, game_state="START"):
         for widget in self.upper_frame.winfo_children():
             widget.destroy()
+
         self.current_label = tk.Label(
             self.upper_frame,
             text=f"Round: {self.controller.get_current_round()}\n"
-                 f"Question: {self.controller.get_current_question()}\n"
+                 f"Question: {self.controller.get_current_question_nb()}\n"
                  f"Player: {self.controller.get_current_player()}\n"
                  f"Wrongs: {self.controller.get_wrongs_answers()}\n",
             font=("Arial", 12, "bold"),
@@ -44,8 +45,9 @@ class FirstRoundControlFrame:
             padx=10,
             pady=10,
         )
+
         self.current_label.pack(side="left")
-        if self.controller.is_playing():
+        if game_state == "PLAY":
             self.create_playing_control()
         else:
             self.create_non_playing_control()
@@ -66,12 +68,9 @@ class FirstRoundControlFrame:
 
     def correct(self):
         self.controller.correct_answer_1()
-        self.update_round()
 
     def incorrect(self):
         self.controller.wrong_answer_1()
-        self.update_round()
 
     def next_question(self):
         self.controller.next_question_1()
-        self.update_round()

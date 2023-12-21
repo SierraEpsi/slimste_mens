@@ -1,14 +1,18 @@
 import tkinter as tk
 
+from SlimsteFrames.DefaultFrame import DefaultFrame
 from SlimsteUtils.Player import Player
 
 from SlimsteFrames.CandidateFrame import CandidateFrame
 from SlimsteFrames.FirstRoundFrame import FirstRoundFrame
 from SlimsteFrames.SecondRoundFrame import SecondRoundFrame
+from SlimsteFrames.ThirdRoundFrame import ThirdRoundFrame
 
 
 class ContentWindow:
     def __init__(self):
+        self.round = 0
+
         self.window = tk.Tk()
         self.window.title("De slimste klinker")
 
@@ -23,10 +27,11 @@ class ContentWindow:
         self.upper_frame.pack(side="top", fill="x")
         self.lower_frame.pack(side="bottom", fill="x")
 
-        self.candidate_frame = CandidateFrame(self.lower_frame, [
+        self.candidate_frame = None
+        self.init_candidates([
             Player("player_1"), Player("player_2"), Player("player_3")
         ])
-        self.content_frame = None
+        self.content_frame = DefaultFrame(self.upper_frame)
 
     def start(self):
         self.window.mainloop()
@@ -37,15 +42,34 @@ class ContentWindow:
     def get_content_frame(self):
         return self.content_frame
 
+    def init_candidates(self, players):
+        for widget in self.lower_frame.winfo_children():
+            widget.destroy()
+        self.candidate_frame = CandidateFrame(self.lower_frame, players)
+
+    def refresh(self, players, current_player=-1, question_nb=-1):
+        if self.round == 1:
+            self.content_frame.refresh(question_nb)
+        else:
+            self.content_frame.refresh()
+        self.candidate_frame.refresh(players, current_player)
+
     def create_round_1(self):
+        self.round = 1
         for widget in self.upper_frame.winfo_children():
             widget.destroy()
         self.content_frame = FirstRoundFrame(self.upper_frame)
 
-    def create_round_2(self, answers):
+    def create_round_2(self, question):
+        self.round = 2
         for widget in self.upper_frame.winfo_children():
             widget.destroy()
-        self.content_frame = SecondRoundFrame(self.upper_frame, answers)
+        self.content_frame = SecondRoundFrame(self.upper_frame, question)
+
+    def create_round_3(self, question):
+        for widget in self.upper_frame.winfo_children():
+            widget.destroy()
+        self.content_frame = ThirdRoundFrame(self.upper_frame, question)
 
 
 if __name__ == "__main__":

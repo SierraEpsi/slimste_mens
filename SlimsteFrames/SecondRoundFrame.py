@@ -2,24 +2,24 @@ import tkinter as tk
 
 
 class SecondRoundFrame:
-    def __init__(self, frame, answers):
+    def __init__(self, frame, question):
         # Set up frame structure
-        self.answers = answers
+        self.question = question
         self.info_frame = tk.Frame(master=frame, bg="grey", pady=5, padx=5)
         self.info_frame.pack(side="top", fill="x")
-        self.refresh_frame()
+        self.refresh()
 
-    def refresh_frame(self):
+    def refresh(self):
         for widget in self.info_frame.winfo_children():
             widget.destroy()
 
-        for i, answer in enumerate(self.answers):
-            color="red"
-            if answer["given"]:
+        for i, answer in enumerate(self.question.get_answers()):
+            color = "red"
+            if answer.is_revealed():
                 color = "white"
             label = tk.Label(
                 master=self.info_frame,
-                text=answer["answer"],
+                text=answer.get_answer(),
                 font=("Arial", 16, "bold"),
                 fg=color,
                 bg="red",
@@ -27,10 +27,6 @@ class SecondRoundFrame:
                 pady=5,
             )
             label.grid(row=i, column=0, padx=5, pady=5)
-
-    def reveal_answer(self, answer_nb):
-        self.answers[answer_nb]["given"] = True
-        self.refresh_frame()
 
 if __name__ == "__main__":
     window = tk.Tk()

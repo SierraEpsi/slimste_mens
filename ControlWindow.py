@@ -3,13 +3,14 @@ import tkinter as tk
 from SlimsteFrames.SecondRoundControlFrame import SecondRoundControlFrame
 from SlimsteFrames.SetupFrame import SetupFrame
 from SlimsteFrames.FirstRoundControlFrame import FirstRoundControlFrame
+from SlimsteFrames.ThirdRoundControlFrame import ThirdRoundControlFrame
 
 
 class ControlWindow:
-    def __init__(self, controller):
+    def __init__(self):
         self.window = tk.Tk()
         self.window.title("Quizz Controller")
-        self.controller = controller
+        self.controller = None
         self.candidate_entries = None
         self.control_frame = None
 
@@ -38,6 +39,9 @@ class ControlWindow:
         for i, button in enumerate(self.round_buttons):
             button.grid(row=i, column=0, sticky="ew", pady=5, padx=10)
 
+    def set_controller(self, controller):
+        self.controller = controller
+
     def get_control_frame(self):
         return self.control_frame
 
@@ -51,6 +55,11 @@ class ControlWindow:
             self.create_first_round()
         elif round_name == "Open deur":
             self.create_second_round()
+        elif round_name == "Puzzel ronde":
+            self.create_third_round()
+
+    def refresh(self, game_state="START"):
+        self.control_frame.refresh(game_state)
 
     def create_setup(self):
         for widget in self.right_frame.winfo_children():
@@ -70,8 +79,19 @@ class ControlWindow:
         self.control_frame = SecondRoundControlFrame(
             self.right_frame,
             self.controller,
-            self.controller.get_current_answers()
+            self.controller.get_current_question()
         )
+        self.controller.refresh()
+
+    def create_third_round(self):
+        for widget in self.right_frame.winfo_children():
+            widget.destroy()
+        self.controller.start_round_3()
+        self.control_frame = ThirdRoundControlFrame(
+            self.right_frame,
+            self.controller
+        )
+        self.controller.refresh()
 
     def setup_game(self):
         candidate_names = [entry.get() for entry in self.candidate_entries]

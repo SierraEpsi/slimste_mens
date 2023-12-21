@@ -6,9 +6,9 @@ class FirstRoundFrame:
         # Set up frame structure
         self.info_frame = tk.Frame(master=frame, bg="grey", pady=5, padx=5)
         self.info_frame.pack(side="top", fill="x")
-        self.refresh_frame(1)
+        self.refresh(1)
 
-    def refresh_frame(self, highlight=0):
+    def refresh(self, highlight=0):
         for widget in self.info_frame.winfo_children():
             widget.destroy()
 

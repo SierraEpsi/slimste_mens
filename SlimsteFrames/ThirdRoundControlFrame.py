@@ -1,8 +1,8 @@
 import tkinter as tk
 
 
-class SecondRoundControlFrame:
-    def __init__(self, frame, controller, question):
+class ThirdRoundControlFrame:
+    def __init__(self, frame, controller):
         self.controller = controller
         self.upper_frame = tk.Frame(
             master=frame,
@@ -14,7 +14,8 @@ class SecondRoundControlFrame:
         self.upper_frame.pack(side="top", fill="x")
         self.lower_frame.pack(side="bottom", fill="x")
 
-        self.refresh(question)
+        self.refresh()
+        self.create_start_playing()
 
     def refresh(self, game_state="START"):
         question = self.controller.get_current_question()
@@ -53,13 +54,6 @@ class SecondRoundControlFrame:
         else:
             answer_button = tk.Button(self.upper_frame, text=question.get_answer(2).get_answer(), command=lambda: self.reveal_answer(2))
             answer_button.grid(row=2, column=0, padx=5, pady=5)
-
-        if game_state != "PLAY" or question.get_answer(3).is_revealed():
-            answer_label = tk.Label(master=self.upper_frame, text=question.get_answer(3).get_answer())
-            answer_label.grid(row=3, column=0, padx=5, pady=5)
-        else:
-            answer_button = tk.Button(self.upper_frame, text=question.get_answer(3).get_answer(), command=lambda: self.reveal_answer(3))
-            answer_button.grid(row=3, column=0, padx=5, pady=5)
 
     def create_start_playing(self):
         for widget in self.lower_frame.winfo_children():
